@@ -16,16 +16,26 @@ double num(){
   double r=0;
   if(c[0]=='('){c++;r=eval(num(),0);c++;}
   else if(c[0]=='-'){c++;r=-num();}
-  else while(c[0]>='0'&&c[0]<='9'){r=r*10+(c[0]-'0');c++;}
+  else while(c[0]>='0'&&c[0]<='9'){
+      r=r*10+(c[0]-'0');c++;}
+  double dec=1;
+  if(c[0]=='.'){
+    c++;
+    while(c[0]>='0'&&c[0]<='9'){
+      dec/=10;r+=dec*(c[0]-'0');
+      c++;}
+  }
   return r;}
   
 
 double eval(double r,int lev)
-{while((lev==0&&(c[0]=='+'||c[0]=='-'))||(lev==1&&(c[0]=='*'||c[0]=='/')||(lev==2&&c[0]=='^')))
+{while((lev==0&&(c[0]=='+'||c[0]=='-'))||(lev<=1&&(c[0]=='*'||c[0]=='/')||(lev<=2&&c[0]=='^')))
       {char op=c[0];c++;
     double rhs=num();
     while((op=='+'||op=='-')&&(c[0]=='*'||c[0]=='/'))
       rhs=eval(rhs,1);
+    while((op=='+'||op=='-')&&c[0]=='^')
+      rhs=eval(rhs,2);
     while((op=='*'||op=='/')&&(c[0]=='^'))
       rhs=eval(rhs,2);
     if(op=='+')r+=rhs;
