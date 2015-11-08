@@ -29,20 +29,21 @@ double num(){
   
 
 double eval(double r,int lev)
-{while((lev==0&&(c[0]=='+'||c[0]=='-'))||(lev<=1&&(c[0]=='*'||c[0]=='/')||(lev<=2&&c[0]=='^')))
+{while((lev==0&&(c[0]=='+'||c[0]=='-'))||(lev<=1&&(c[0]=='*'||c[0]=='/'||c[0]=='%')||(lev<=2&&c[0]=='^')))
       {char op=c[0];c++;
     double rhs=num();
-    while((op=='+'||op=='-')&&(c[0]=='*'||c[0]=='/'))
+    while((op=='+'||op=='-')&&(c[0]=='*'||c[0]=='/'||c[0]=='%'))
       rhs=eval(rhs,1);
     while((op=='+'||op=='-')&&c[0]=='^')
       rhs=eval(rhs,2);
-    while((op=='*'||op=='/')&&(c[0]=='^'))
+    while((op=='*'||op=='/'||op=='%')&&(c[0]=='^'))
       rhs=eval(rhs,2);
     if(op=='+')r+=rhs;
     else if(op=='-')r-=rhs;
     else if(op=='*')r*=rhs;
     else if(op=='/')r/=rhs;
     else if(op=='^')r=std::pow(r,rhs);
+    else if(op=='%')r=((long)r)%((long)rhs);
       }
 return r;  
 }
