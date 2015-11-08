@@ -15,6 +15,18 @@ double eval(double,int);
 double num(){
   double r=0;
   if(c[0]=='('){c++;r=eval(num(),0);c++;}
+  //P means \pi
+  else if(c[0]=='P'){c++;r=M_PI;}
+  //E means e
+  else if(c[0]=='E'){c++;r=M_E;}
+  //e() means exp
+  else if(c[0]=='e'){c++;r=std::exp(num());}
+  //s() means sin
+  else if(c[0]=='s'){c++;r=std::sin(num());}
+  //l() means log
+  else if(c[0]=='l'){c++;r=std::log(num());}
+  //c() means cos
+  else if(c[0]=='c'){c++;r=std::cos(num());}
   else if(c[0]=='-'){c++;r=-num();}
   else while(c[0]>='0'&&c[0]<='9'){
       r=r*10+(c[0]-'0');c++;}
@@ -26,18 +38,24 @@ double num(){
       c++;}
   }
   return r;}
-  
+
+inline int oplev(char c){
+  switch(c){
+  case '+':return 0;
+  case '-':return 0;
+  case '*':return 1;
+  case '/':return 1;
+  case '%':return 1;
+  case '^':return 2;
+  default: return -1;}
+}
 
 double eval(double r,int lev)
-{while((lev==0&&(c[0]=='+'||c[0]=='-'))||(lev<=1&&(c[0]=='*'||c[0]=='/'||c[0]=='%')||(lev<=2&&c[0]=='^')))
+{while(lev<=oplev(c[0]))
       {char op=c[0];c++;
     double rhs=num();
-    while((op=='+'||op=='-')&&(c[0]=='*'||c[0]=='/'||c[0]=='%'))
-      rhs=eval(rhs,1);
-    while((op=='+'||op=='-')&&c[0]=='^')
-      rhs=eval(rhs,2);
-    while((op=='*'||op=='/'||op=='%')&&(c[0]=='^'))
-      rhs=eval(rhs,2);
+    while(oplev(c[0])>oplev(op))
+      rhs=eval(rhs,oplev(c[0]));
     if(op=='+')r+=rhs;
     else if(op=='-')r-=rhs;
     else if(op=='*')r*=rhs;
