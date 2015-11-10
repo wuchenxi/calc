@@ -1,5 +1,10 @@
 #include "cal.h"
 #include <cmath>
+#include <tuple>
+
+using std::tuple;
+using std::tie;
+using std::make_tuple;
 
 cal::calc_exp::calc_exp(std::string s):expr(s),result(0),done(false)
 {}
@@ -10,25 +15,26 @@ std::string cal::calc_exp::get_exp(){return expr;}
 
 char* c;
 
-double eval(double,int);
+tuple<double, char*> eval(tuple<double,char*>,int);
 
-double num(){
+tuple<double,char*> num(char* c){
   double r=0;
-  if(c[0]=='('){c++;r=eval(num(),0);c++;}
+  switch(c[0]){
+  case '(':c++;tie(r,c)=eval(num(c),0);c++;break;
   //P means \pi
-  else if(c[0]=='P'){c++;r=M_PI;}
+  case 'P':c++;r=M_PI;break;
   //E means e
-  else if(c[0]=='E'){c++;r=M_E;}
+  case 'E':c++;r=M_E;break;
   //e() means exp
-  else if(c[0]=='e'){c++;r=std::exp(num());}
+  case 'e':c++;tie(r,c)=num(c);r=std::exp(r);break;
   //s() means sin
-  else if(c[0]=='s'){c++;r=std::sin(num());}
+  case 's':c++;tie(r,c)=num(c);r=std::sin(r);break;
   //l() means log
-  else if(c[0]=='l'){c++;r=std::log(num());}
+  case 'l':c++;tie(r,c)=num(c);r=std::log(r);break;
   //c() means cos
-  else if(c[0]=='c'){c++;r=std::cos(num());}
-  else if(c[0]=='-'){c++;r=-num();}
-  else while(c[0]>='0'&&c[0]<='9'){
+  case 'c':c++;tie(r,c)=num(c);r=std::cos(r);break;
+  case '-':c++;tie(r,c)=num(c);r*=-1;break;
+  default: while(c[0]>='0'&&c[0]<='9'){
       r=r*10+(c[0]-'0');c++;}
   double dec=1;
   if(c[0]=='.'){
@@ -36,8 +42,8 @@ double num(){
     while(c[0]>='0'&&c[0]<='9'){
       dec/=10;r+=dec*(c[0]-'0');
       c++;}
-  }
-  return r;}
+  }}
+  return make_tuple(r,c);}
 
 inline int oplev(char c){
   switch(c){
@@ -50,12 +56,17 @@ inline int oplev(char c){
   default: return -1;}
 }
 
-double eval(double r,int lev)
-{while(lev<=oplev(c[0]))
-      {char op=c[0];c++;
-    double rhs=num();
+tuple<double,char*> eval(tuple<double,char*> cur,int lev)
+{
+  char* c;
+  double r;
+  tie(r,c)=cur;
+  while(lev<=oplev(c[0]))
+    {char op=c[0];c++;
+      double rhs;
+	tie(rhs,c)=num(c);
     while(oplev(c[0])>oplev(op))
-      rhs=eval(rhs,oplev(c[0]));
+      tie(rhs,c)=eval(make_tuple(rhs,c),oplev(c[0]));
     if(op=='+')r+=rhs;
     else if(op=='-')r-=rhs;
     else if(op=='*')r*=rhs;
@@ -63,15 +74,14 @@ double eval(double r,int lev)
     else if(op=='^')r=std::pow(r,rhs);
     else if(op=='%')r=((long)r)%((long)rhs);
       }
-return r;  
+  return make_tuple(r,c);  
 }
 
 double cal::calc_exp::calc(){
   //lazy eval
   if(done)return result;
   done=true;
-  c=(char*)expr.c_str();
-  result=eval(num(),0);
+  double result=std::get<0>(eval(num((char*)expr.c_str()),0));
   return result;
 }
 
