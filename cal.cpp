@@ -39,7 +39,15 @@ tuple<double,char*> num(char* c){
   case '$':c++;{tie(r,c)=num(c);
       int addr=(int)r;
       if(0<=addr&&addr<1024*128)
-      r=memory[addr];}break;
+      r=memory[addr];}break;    
+  //L() means loop, i.e. evaluating the part in () until the result is zero
+  case 'L':c++;{
+      double r0;
+      char*c0=c;
+      do{
+	tie(r0,c)=num(c0);
+      }while(r0);
+      r=r0;}break;
   //negative sign
   case '-':c++;tie(r,c)=num(c);r*=-1;break;
   default: while(c[0]>='0'&&c[0]<='9'){
@@ -55,6 +63,7 @@ tuple<double,char*> num(char* c){
 
 inline int oplev(char c){
   switch(c){
+  case '?':return 0;
   case ';':return 0;
   case ':':return 1;//assignment operator: value:address
   case '>':return 2;
