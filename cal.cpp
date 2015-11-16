@@ -2,23 +2,31 @@
 #include <cmath>
 #include <tuple>
 
+//size of memory
+const int N=1024*128;
+
 using std::tuple;
 using std::tie;
 using std::make_tuple;
 
+
 //memory
-double memory[1024*128];
+double memory[N];
 
-
+//constructor
 cal::calc_exp::calc_exp(std::string s):expr(s),result(0),done(false)
 {}
 
+//getter and setter for expr
 int cal::calc_exp::set_exp(std::string s){expr=s;done=false;return 0;}
 
 std::string cal::calc_exp::get_exp(){return expr;}
 
+
+//Binary operators
 tuple<double, char*> eval(tuple<double,char*>,int);
 
+//Unary operators
 tuple<double,char*> num(char* c){
   double r=0;
   switch(c[0]){
@@ -38,7 +46,7 @@ tuple<double,char*> num(char* c){
   //$() read from memory
   case '$':c++;{tie(r,c)=num(c);
       int addr=(int)r;
-      if(0<=addr&&addr<1024*128)
+      if(0<=addr&&addr<N)
       r=memory[addr];}break;    
   //L() means loop, i.e. evaluating the part in () until the result is zero
   case 'L':c++;{
@@ -61,6 +69,7 @@ tuple<double,char*> num(char* c){
   }}
   return make_tuple(r,c);}
 
+//precedence of binary operators
 inline int oplev(char c){
   switch(c){
   case '?':return 0;
@@ -77,6 +86,7 @@ inline int oplev(char c){
   default: return -1;}
 }
 
+//Parsing binary operators with recursive descent
 tuple<double,char*> eval(tuple<double,char*> cur,int lev)
 {
   char* c;
@@ -98,13 +108,14 @@ tuple<double,char*> eval(tuple<double,char*> cur,int lev)
     case '>':r=(r>rhs);break;
     case '<':r=(r<rhs);break;
     case ':':{int addr=(int)rhs;
-	if(addr>=0&&addr<1024*128)memory[addr]=r;} break;
+	if(addr>=0&&addr<N)memory[addr]=r;} break;
     case ';':r=rhs;break;
     }
 }
   return make_tuple(r,c);  
 }
 
+//main calculation function
 double cal::calc_exp::calc(){
   //lazy eval
   if(done)return result;
