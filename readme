@@ -1,0 +1,8 @@
+Simple calculator with Cython and tkinter
+
+Features implemented: arithmetic operations, trig, exp and log functions, programming features etc.
+Requirements: Python, Cython
+Usage: 
+make
+python gui.py
+
