@@ -1,5 +1,6 @@
 Simple calculator with Cython and tkinter
 
+Files: cal.cpp, cal.h, CALC.pyx, gui.py, setup.py, Makefile
 Features implemented: arithmetic operations, trig, exp and log functions, programming features etc.
 Requirements: Python, Cython
 Usage: 
