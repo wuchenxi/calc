@@ -1,6 +1,7 @@
 #include "cal.h"
 #include <cmath>
 #include <tuple>
+#include <unordered_map>
 
 //size of memory
 const int N=1024*128;
@@ -9,9 +10,8 @@ using std::tuple;
 using std::tie;
 using std::make_tuple;
 
-
 //memory
-double memory[N];
+std::unordered_map<double,double> memory;
 
 //constructor
 cal::calc_exp::calc_exp(std::string s):expr(s),result(0),done(false)
@@ -44,10 +44,7 @@ tuple<double,char*> num(char* c){
   //c() means cos
   case 'c':c++;tie(r,c)=num(c);r=std::cos(r);break;
   //$() read from memory
-  case '$':c++;{tie(r,c)=num(c);
-      int addr=(int)r;
-      if(0<=addr&&addr<N)
-      r=memory[addr];}break;    
+  case '$':c++;tie(r,c)=num(c);r=memory[r];break;    
   //L() means loop, i.e. evaluating the part in () until the result is zero
   case 'L':c++;{
       double r0;
@@ -107,8 +104,7 @@ tuple<double,char*> eval(tuple<double,char*> cur,int lev)
     case '%':r=((long)r)%((long)rhs);break;
     case '>':r=(r>rhs);break;
     case '<':r=(r<rhs);break;
-    case ':':{int addr=(int)rhs;
-	if(addr>=0&&addr<N)memory[addr]=r;} break;
+    case ':':memory[rhs]=r; break;
     case ';':r=rhs;break;
     }
 }
