@@ -25,7 +25,7 @@ int cal::calc_exp::set_exp(std::string s){expr=s;done=false;return 0;}
 std::string cal::calc_exp::get_exp(){return expr;}
 
 //skip space, tab and \n
-void next(char* &c){
+inline void next(char* &c){
   while(isspace(*c))c++;
 }
 
