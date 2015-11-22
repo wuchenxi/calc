@@ -7,7 +7,7 @@ root=Tk()
 root.title("Calculator")
 
 e=Text(root)
-e.pack()
+e.pack(fill=BOTH, expand=1)
 e.focus_set()
 
 def callback():
