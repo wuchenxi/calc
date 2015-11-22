@@ -36,21 +36,35 @@ tuple<double,char*> num(char* c){next(c);
   case '(':c++;tie(r,c)=eval(num(c),0);if(c[0]==')')c++;break;
 
   //Math constants and functions
-  //P means \pi
-  case 'P':c++;r=M_PI;break;
+  //pi
+  case 'P':if(c[1]=='i'){c+=2;r=M_PI;}break;
   //E means e
   case 'E':c++;r=M_E;break;
-  //e() means exp
-  case 'e':c++;tie(r,c)=num(c);r=std::exp(r);break;
-  //s() means sin
-  case 's':c++;tie(r,c)=num(c);r=std::sin(r);break;
-  //l() means log
-  case 'l':c++;tie(r,c)=num(c);r=std::log(r);break;
-  //c() means cos
-  case 'c':c++;tie(r,c)=num(c);r=std::cos(r);break;
-  //a() means atan
-  case 'a':c++;tie(r,c)=num(c);r=std::atan(r);break;
+  //exp
+  case 'e':if(c[1]=='x'&&c[2]=='p'){
+      c+=3;tie(r,c)=num(c);r=std::exp(r);}break;
+  //sin
+  case 's':if(c[1]=='i'&&c[2]=='n'){
+      c+=3;tie(r,c)=num(c);r=std::sin(r);}break;
+  //log
+  case 'l':if(c[1]=='o'&&c[2]=='g'){
+      c+=3;tie(r,c)=num(c);r=std::log(r);}break;
+  //cos
+  case 'c':if(c[1]=='o'&&c[2]=='s'){
+      c+=3;tie(r,c)=num(c);r=std::cos(r);}break;
+  //tan
+  case 't':if(c[1]=='a'&&c[2]=='n'){
+      c+=3;tie(r,c)=num(c);r=std::tan(r);}break;
+  //atan
+  case 'a':if(c[1]=='t'&&c[2]=='a'&&c[3]=='n'){
+      c+=4;tie(r,c)=num(c);r=std::atan(r);}
     
+  //acos
+       else if(c[1]=='c'&&c[1]=='o'&&c[2]=='s'){
+      c+=4;tie(r,c)=num(c);r=std::acos(r);}
+  //asin
+       else if(c[1]=='s'&&c[2]=='i'&&c[3]=='n'){
+      c+=4;tie(r,c)=num(c);r=std::asin(r);}break;
   //$() reads from memory
   case '$':c++;tie(r,c)=num(c);r=memory[r];break;
     
