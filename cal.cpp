@@ -3,6 +3,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <cctype>
+
 //#include <iostream>
 
 using std::tuple;
@@ -37,9 +38,9 @@ tuple<double,char*> num(char* c){next(c);
 
   //Math constants and functions
   //pi
-  case 'P':if(c[1]=='i'){c+=2;r=M_PI;}break;
+  case 'P':if(c[1]=='i'){c+=2;r=4*std::atan(1);}break;
   //E means e
-  case 'E':c++;r=M_E;break;
+  case 'E':c++;r=std::exp(1);break;
   //exp
   case 'e':if(c[1]=='x'&&c[2]=='p'){
       c+=3;tie(r,c)=num(c);r=std::exp(r);}break;
