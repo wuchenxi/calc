@@ -1,0 +1,42 @@
+Language Specification for our calculator
+
+The memory for our calculator consists of variables of the type double labeled by doubles, implemented with an unordered_map.
+
+We implemented 10 binary, infix operators with the following precedence:
+(1) ^
+(2) * / %
+(3) + -
+(4) > <
+(5) :
+(6) ;
+
+The meanings of *, /, %, +, -, >, < are the same as in C/C++. a^b means the b-th power of a, a:b means assigning the value of a to the variable with label b, then returning value of a. a;b means evaluating both a and b but only returning the value of b.
+
+We implemented 10 unary, prefix, right associative operators that all have higher precedence than the binary operators. They are described below.
+
+Firstly, there are 8 mathematical functions whose meanings are self-evident:
+
+sin
+cos
+tan
+asin
+acos
+atan
+log
+exp
+
+Then there is the $ operator. $a returns the value of the variable labeled a.
+
+Lastly there is the - operator, which is the negative sign.
+
+We implemented 2 types of brackets: () and []. () is the usual bracket used to denote the order of operations. [] is the only control structure in our language. When evaluating [expr], first evaluate the first largest sub-expression of expr that is not formed by two sub-expressions joined by a binary operator. If this subexpression evaluates to 0, end the evaluation and return 0. If not, finish the evaluation of expr. If the value of expr is 0, end the evaluation and return 0. If not, evaluate [expr] again.
+
+[] can be used to implement comment, if, while and do...while as follows: 
+
+[0; This is a comment.];
+[(a); s;0]; ---> if(a) s;
+[(a); s;1]; ---> while(a) s;
+[1; s;(a)]; ---> do s while(a);
+
+We also implemented two mathematical constants E and Pi.
+
