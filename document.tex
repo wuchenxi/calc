@@ -1,5 +1,12 @@
 \documentclass[]{article}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	columns=flexible,
+	breaklines=true
+}
 \usepackage{tikz,pgfplots}
+\usepackage[title,titletoc,toc]{appendix}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
 %opening
@@ -37,9 +44,10 @@ The following files are contained in the submitted .zip archive:
 	\item gui.py\\
 	A GUI written with Python using tkinter.
 	\item language\_spec.txt\\
-	Specification of the programming language implemented by our calculator.
+	Specification of the programming language implemented by our calculator. We also include it as Appendix A for convenience.
 	\item testcases.txt\\
-	Test cases we used in debugging. Besides basic arithmetics, it includes expressions that calculate factorial, Fibonacci numbers, finds roots with Newton's method, does bubble sort and count primes with the Sieve of Eratosthenes. 
+	Test cases we used in debugging. Besides basic arithmetics, it includes expressions that calculate factorial, Fibonacci numbers, finds roots with Newton's method, does bubble sort and count primes with the Sieve of Eratosthenes.
+	They are also included in Appendix B. 
 \end{itemize}
 
 To compile on a Linux or OSX machine, just type ``make''. To run, type ``python gui.py''. Enter the expression one want to evaluate on the large Edit box, then click the button labeled ``Evaluate''. Below is a screen shot.\\
@@ -48,7 +56,7 @@ To compile on a Linux or OSX machine, just type ``make''. To run, type ``python 
 
 \section{Implementation Details}
 \subsection{The calculator}
-We implemented 10 infix operators and 10 unary, prefix operators, as well as the bracket () and a control structure [], all defined and described in language\_spec.txt. The binary operators are implemented by a simple precedence climbing algorithm which is a modified version of recursive descent. Variables are implemented as an unordered\_map from the C++ standard library.
+We implemented 10 infix operators and 10 unary, prefix operators, as well as the bracket () and a control structure [], all defined and described in language\_spec.txt. The binary operators are implemented by a simple precedence climbing algorithm which is a modified version of recursive descent. Variables are implemented as an unordered\_map from the C++ standard library. We checked the matching of '[' and ']' before the evaluation to prevent out-of-bound access of memory, and discard any remaining characters after a completed expression.
 
 \subsection{The interface with Python}
 On the C++ side, we made a class calc\_exp which has as its members an expression as a C++ string, the result of its evaluation, a boolean flag, the setters and getters of the expression, and a function eval(). After a change of the expression, when eval() is called for the first time, the expression is evaluated and the result is stored and returned. Further calls of eval() will return the stored result unless a change in expression reset the boolean flag.\\
@@ -57,6 +65,82 @@ On the Python side, we made a class CALC, with getters and setters of the expres
 
 \subsection{GUI}
 The GUI is written in Python with tkinter package and is rather simple and straightforward.
+
+\begin{appendices}
+	\section{language\_spec.txt}
+\begin{lstlisting}
+The memory for our calculator consists of variables of the type double labeled by doubles, implemented with an unordered_map.
+	
+We implemented 10 binary, infix operators with the following precedence:
+(1) ^
+(2) * / %
+(3) + -
+(4) > <
+(5) :
+(6) ;
+	
+The meanings of *, /, %, +, -, >, < are the same as in C/C++. a^b means the b-th power of a, a:b means assigning the value of a to the variable with label b, then returning value of a. a;b means evaluating both a and b but only returning the value of b.
+	
+We implemented 10 unary, prefix, right associative operators that all have higher precedence than the binary operators. They are described below.
+	
+Firstly, there are 8 mathematical functions whose meanings are self-evident:
+	
+sin
+cos
+tan
+asin
+acos
+atan
+log
+exp
+	
+Then there is the $ operator. $a returns the value of the variable labeled a.
+
+Lastly there is the - operator, which is the negative sign.
+	
+We implemented 2 types of brackets: () and []. () is the usual bracket used to denote the order of operations. [] is the only control structure in our language. When evaluating [expr], first evaluate the first largest sub-expression of expr that is not formed by two sub-expressions joined by a binary operator. If this subexpression evaluates to 0, end the evaluation and return 0. If not, finish the evaluation of expr. If the value of expr is 0, end the evaluation and return 0. If not, evaluate [expr] again.
+	
+[] can be used to implement comment, if, while and do...while as follows: 
+	
+[0; This is a comment.];
+[(a); s;0]; ---> if(a) s;
+[(a); s;1]; ---> while(a) s;
+[1; s;(a)]; ---> do s while(a);
+	
+We also implemented two mathematical constants E and Pi.
+\end{lstlisting}
+
+\section{Selected Test Cases}
+\subsection{Factorial}
+\begin{lstlisting}
+1:0;10:1;[1;$1*$0:0;$1-1:1;$1];$0 #Factorial
+\end{lstlisting}	
+\subsection{Sieve of Eratosthenes}
+\begin{lstlisting}
+[0; Sieve of Eratosthenes];
+[0; Count the number of primes smaller than 10000];
+10000:0;
+[0;Create array and set entries 1];
+2:1;[1;1:$1;$1+1:1;$1<$0]; 
+[0; Run the Sieve];
+2:1;[1;
+[$$1;$1*2:-1;
+[1;0:$-1;$-1+$1:-1;$-1<$0];];
+$1+1:1;$1<$0^0.5];
+[0;Count primes];
+2:1;0:-1;[1;$-1+$$1:-1;$1+1:1;$1<$0];
+$-1
+\end{lstlisting}
+\subsection{Newton's Method}
+\begin{lstlisting}
+[0; Solve e^x+x=0 by Newton's method];
+
+0:0;
+[1;$0-(exp($0)+$0)/(exp($0)+1):0;
+(exp($0)+$0)^2>0.1^20];
+$0
+\end{lstlisting}
+\end{appendices}
 
 
 \end{document}
