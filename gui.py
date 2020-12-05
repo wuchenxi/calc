@@ -1,7 +1,7 @@
-from Tkinter import *
+from tkinter import *
 import CALC
 
-cal=CALC.CALC("")
+cal=CALC.CALC(b"")
 
 root=Tk()
 root.title("Calculator")
@@ -12,7 +12,7 @@ e.focus_set()
 
 def callback():
     text=e.get("1.0",END)
-    cal.setexpr(text)
+    cal.setexpr(bytes(text, 'utf-8'))
     o.delete(0, END)
     o.insert(0, str(cal.evalexp()))
 
