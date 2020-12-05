@@ -5,5 +5,5 @@ Features implemented: arithmetic operations, trig, exp and log functions, progra
 Requirements: Python, Cython
 Usage: 
 make
-python gui.py
+python3 gui.py
 
