@@ -3,3 +3,4 @@ all:
 
 clean:
 	-rm -r CALC.cpp build
+	-rm *.so
